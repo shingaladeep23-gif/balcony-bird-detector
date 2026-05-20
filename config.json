@@ -1,0 +1,11 @@
+{
+  "camera_url": "0",
+  "telegram_bot_token": "",
+  "telegram_chat_id": "",
+  "confidence_threshold": 0.5,
+  "cooldown_minutes": 5,
+  "consecutive_frames": 5,
+  "detection_zone": [],
+  "arduino_port": "",
+  "arduino_enabled": false
+}

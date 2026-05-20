@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered Balcony Bird Detector with real-time video streaming, intelligent zone masking, and instant Telegram push alerts.">
+    <title>AeroSentinel - Balcony Bird Detector Dashboard</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="app-container">
+        
+        <!-- Header Section -->
+        <header class="main-header">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-feather-pointed"></i>
+                </div>
+                <div>
+                    <h1 id="app-title">AeroSentinel</h1>
+                    <p class="subtitle">AI Balcony Bird Security Monitor</p>
+                </div>
+            </div>
+            
+            <div class="status-panel">
+                <div class="status-badge" id="camera-status-badge">
+                    <span class="status-dot disconnected" id="camera-dot"></span>
+                    <span class="status-text">CAM: <span id="camera-status-text">Disconnected</span></span>
+                </div>
+                <div class="status-badge" id="model-status-badge">
+                    <span class="status-dot active" id="model-dot"></span>
+                    <span class="status-text">AI MODEL: <span id="model-status-text">Active</span></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Side: Live Feed & Video Controls -->
+            <section class="card monitor-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-satellite-dish"></i> Live Stream Feed</h2>
+                    <div class="live-pulse">
+                        <span class="pulse-ring"></span>
+                        <span class="pulse-dot"></span>
+                        LIVE
+                    </div>
+                </div>
+                
+                <div class="video-container" id="video-wrapper">
+                    <!-- MJPEG Live Stream -->
+                    <img id="live-stream-feed" src="/api/stream" alt="Live Camera Feed Stream" crossorigin="anonymous">
+                    
+                    <!-- Drawing Canvas Overlay for Zones -->
+                    <canvas id="zone-drawing-canvas"></canvas>
+                </div>
+
+                <div class="video-controls">
+                    <button class="btn btn-outline" id="btn-draw-zone" title="Click points on screen to define a landing zone">
+                        <i class="fa-solid fa-pen-ruler"></i> Draw Detection Zone
+                    </button>
+                    <button class="btn btn-outline btn-hidden" id="btn-save-zone">
+                        <i class="fa-solid fa-check"></i> Save Zone
+                    </button>
+                    <button class="btn btn-danger btn-hidden" id="btn-clear-zone">
+                        <i class="fa-solid fa-trash-can"></i> Clear Zone
+                    </button>
+                    <div class="control-divider"></div>
+                    <div class="toggle-container">
+                        <span class="toggle-label">Zone Masking</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-zone-active" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side Column: Active Deterrent and Configurations -->
+            <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Active Deterrent System Card -->
+                <section class="card deterrent-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-droplet" style="color: #06b6d4;"></i> Active Deterrent System</h2>
+                        <div class="status-badge" id="arduino-status-badge">
+                            <span class="status-dot disconnected" id="arduino-dot"></span>
+                            <span class="status-text">ARDUINO: <span id="arduino-status-text">Disconnected</span></span>
+                        </div>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label for="arduino-port-input">
+                                USB Serial COM Port
+                                <i class="fa-solid fa-circle-info tooltip-icon" title="Arduino Uno port (e.g. COM3 or /dev/ttyACM0)"></i>
+                            </label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-plug input-icon"></i>
+                                <input type="text" id="arduino-port-input" placeholder="e.g. COM3 or /dev/ttyACM0">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <div class="toggle-container" style="margin-left: 0; margin-bottom: 0.5rem; justify-content: space-between; width: 100%;">
+                                <span class="toggle-label" style="font-size: 0.9rem; font-weight: 500;">Enable Automatic Spray Hook</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-arduino-enabled">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            
+                            <button type="button" class="btn btn-cyan btn-full" id="btn-trigger-spray">
+                                <i class="fa-solid fa-shower"></i> Manual Spray Override
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Right Side: Config & Settings Form -->
+                <section class="card settings-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-sliders"></i> System Configurations</h2>
+                    </div>
+                    <form id="settings-form" class="settings-form">
+                        
+                        <div class="form-group">
+                            <label for="camera-url-input">
+                                Camera Feed Source 
+                                <i class="fa-solid fa-circle-info tooltip-icon" title="CCTV RTSP string, Webcam index (e.g. 0), or local sample video path"></i>
+                            </label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-video input-icon"></i>
+                                <input type="text" id="camera-url-input" required placeholder="0 (Webcam) or rtsp://...">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="conf-threshold-slider">
+                                    Confidence Limit: <span id="conf-threshold-val">50%</span>
+                                </label>
+                                <input type="range" id="conf-threshold-slider" min="0.1" max="1.0" step="0.05" value="0.5">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cooldown-slider">
+                                    Notification Cooldown: <span id="cooldown-val">5m</span>
+                                </label>
+                                <input type="range" id="cooldown-slider" min="1" max="60" step="1" value="5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="consecutive-frames-input">
+                                Hysteresis (Consecutive Frames Target)
+                                <i class="fa-solid fa-circle-info tooltip-icon" title="How many consecutive frames a bird must stay in the zone to trigger an alert"></i>
+                            </label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-stopwatch input-icon"></i>
+                                <input type="number" id="consecutive-frames-input" min="1" max="50" required placeholder="5">
+                            </div>
+                        </div>
+
+                        <div class="telegram-section">
+                            <h3><i class="fa-brands fa-telegram text-telegram"></i> Mobile Push Alerts</h3>
+                            
+                            <div class="form-group">
+                                <label for="telegram-token-input">Telegram Bot Token</label>
+                                <div class="input-icon-wrapper">
+                                    <i class="fa-solid fa-key input-icon"></i>
+                                    <input type="password" id="telegram-token-input" placeholder="e.g. 123456789:ABCdefGhI_jkLmNo">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="telegram-chat-id-input">Telegram Chat ID</label>
+                                <div class="input-icon-wrapper">
+                                    <i class="fa-solid fa-hashtag input-icon"></i>
+                                    <input type="text" id="telegram-chat-id-input" placeholder="e.g. -1001234567890">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline btn-full" id="btn-test-notification">
+                                <i class="fa-solid fa-paper-plane"></i> Send Test Notification
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-full" id="btn-save-settings">
+                                <i class="fa-solid fa-floppy-disk"></i> Apply Configurations
+                            </button>
+                        </div>
+
+                    </form>
+                </section>
+            </div>
+
+        </main>
+
+        <!-- Bottom: Historic Logs and Image Lightbox -->
+        <section class="card logs-card">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-clock-rotate-left"></i> Visual Capture Registry</h2>
+                <div class="log-count-badge"><span id="log-count">0</span> visits registered</div>
+            </div>
+            
+            <div class="logs-container" id="logs-timeline-wrapper">
+                <div class="no-logs" id="no-logs-prompt">
+                    <i class="fa-regular fa-folder-open"></i>
+                    <p>No birds captured yet. The live AI scanner is actively monitoring your feed.</p>
+                </div>
+                <div class="logs-grid" id="logs-grid-container">
+                    <!-- Dynamically populated card structure -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Fullscreen Lightbox Modal -->
+        <div id="lightbox-modal" class="modal">
+            <span class="modal-close" id="lightbox-close">&times;</span>
+            <div class="modal-content">
+                <img id="lightbox-img" src="" alt="Fullscreen Bird Capture">
+                <div class="modal-caption" id="lightbox-caption"></div>
+            </div>
+        </div>
+
+        <!-- Notification Toast System -->
+        <div class="toast-container" id="toast-root"></div>
+
+    </div>
+
+    <!-- Script Entrypoint -->
+    <script src="/static/dashboard.js"></script>
+</body>
+</html>

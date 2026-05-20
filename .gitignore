@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# YOLO weights
+*.pt
+
+# Local application data and captures
+static/captures/*.jpg
+static/captures/*.png
+!static/captures/.gitkeep
+
+# IDEs and OS files
+.vscode/
+.idea/
+Thumbs.db
+ehthumbs.db
+Desktop.ini
