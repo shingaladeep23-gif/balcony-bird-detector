@@ -1,6 +1,6 @@
-# 🐦 AeroSentinel: AI-Powered Balcony Bird Detector
+# 🐦 balcony-bird-detector: AI-Powered Balcony Bird Detector
 
-AeroSentinel is an active, premium, and intelligent pest deterrent system designed to protect balcony railings and ledges from landing birds. Using real-time computer vision (Ultralytics YOLOv8), an interactive glassmorphic web dashboard, and instant mobile alerts, it maps physical targets in 2D space to dynamically pan and spray a water deterrent *exactly* where a bird lands.
+balcony-bird-detector is an active, premium, and intelligent pest deterrent system designed to protect balcony railings and ledges from landing birds. Using real-time computer vision (Ultralytics YOLOv8), an interactive glassmorphic web dashboard, and instant mobile alerts, it maps physical targets in 2D space to dynamically pan and spray a water deterrent *exactly* where a bird lands.
 
 ---
 
@@ -21,7 +21,7 @@ AeroSentinel is an active, premium, and intelligent pest deterrent system design
 
 ## 📐 The Target Tracking Mathematics
 
-AeroSentinel translates 2D pixel coordinates from your camera feed into a 1D physical sweep angle ($\theta$) for your servo motor:
+balcony-bird-detector translates 2D pixel coordinates from your camera feed into a 1D physical sweep angle ($\theta$) for your servo motor:
 
 $$\theta = 90^\circ + (x_{\text{norm}} - 0.5) \times \text{FOV}$$
 
